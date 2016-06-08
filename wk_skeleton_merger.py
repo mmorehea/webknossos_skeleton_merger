@@ -8,10 +8,12 @@ import lxml.etree as etree
 
 hasComments = False;
 hasBranchpoints = False;
-
+#Use sys.argv to accept a path wich will be globbed
 files_to_merge = glob.glob('/media/newton/3TBBackup/Dropbox/WebKnossos/VCN/Cell09/Axons/*.nml')
 
 things = Element('things')
+
+
 
 nodeCount = 0
 thingCount = 0
@@ -21,10 +23,30 @@ for ii, file in enumerate(files_to_merge):
 	with open(file) as fd:
     		doc = xmltodict.parse(fd.read())
 	
+
+	if ii == 0:
+		parameters = SubElement(things, 'parameters')
+		SubElement(parameters, 'experiment', {'name ':doc['things']['parameters']['experiment']['@name']})
+		scale = SubElement(parameters, 'scale' , {'x':doc['things']['parameters']['scale']['@x'], 
+							'y':doc['things']['parameters']['scale']['@y'],
+							'z':doc['things']['parameters']['scale']['@z']})
+		offset = SubElement(parameters, 'offset' ,{'x':doc['things']['parameters']['offset']['@x'], 
+							'y':doc['things']['parameters']['offset']['@y'],
+							'z':doc['things']['parameters']['offset']['@z']})
+		time_ms = SubElement(parameters,'time', {'ms':doc['things']['parameters']['time']['@ms']})
+		activeNode_id = SubElement(parameters , 'activeNode', {'id':doc['things']['parameters']['activeNode']['@id']})
+		editPosition = SubElement(parameters, 'editPositioin' ,{'x':doc['things']['parameters']['editPosition']['@x'], 
+							'y':doc['things']['parameters']['editPosition']['@y'],
+							'z':doc['things']['parameters']['editPosition']['@z']})
+		zoomlevel_zoom = SubElement(parameters, 'zoomlevel', {'zoom':doc['things']['parameters']['zoomLevel']['@zoom']})
 	if 'branchpoint' in doc['things'].keys() and doc['things']['branchpoints'].keys():
 		hasBranchpoints = True;
-	if 'comment' in doc['things']['comments'].keys() and doc['things']['comments'].keys():
-		hasComments = True;	
+	print file
+	
+
+	if  not doc['things']['comments'] == None:
+		hasComments = True;
+
 	thing = SubElement(things, 'thing', {'id':str(thingCount),
 					'color.r':doc['things']['thing']['@color.r'],
 					'color.g':doc['things']['thing']['@color.g'],
