@@ -3,13 +3,25 @@ import dicttoxml
 import code
 import glob
 from xml.etree.ElementTree import Element, SubElement, Comment, ElementTree
-import sys
+import sys, os
 import lxml.etree as etree
 
 hasComments = False;
 hasBranchpoints = False;
 #Use sys.argv to accept a path wich will be globbed
-files_to_merge = glob.glob('/media/newton/3TBBackup/Dropbox/WebKnossos/VCN/Cell09/Axons/*.nml')
+
+if len(sys.argv) < 3:
+	print '-------------------------------'
+	print 'wk_skeleton_merger, written by Michael Morehead, Nathan Spencer, & Anna Whelan.'
+	print 'Usage: python wk_skeleton_merger.py [directory_to_skeletons] [output_file_name]'
+	print 'Example: python wk_skeleton_merger.py testset/ output.nml'
+	print 'Warning: not enough parameters'
+	print '-------------------------------'
+	sys.exit()
+
+directory_skeletons = sys.argv[1]
+file_to_write = sys.argv[2]
+files_to_merge = glob.glob(directory_skeletons + '/*.nml')
 
 things = Element('things')
 
@@ -92,9 +104,9 @@ for ii, file in enumerate(files_to_merge):
 						'content':comment['@content']})
 
 tree = ElementTree(things)
-tree.write('masterskel1.nml')
-x = etree.parse("masterskel1.nml")
-f = open('masterskel1.nml', "w")
+tree.write(file_to_write)
+x = etree.parse(file_to_write)
+f = open(file_to_write, "w")
 f.write(etree.tostring(x, pretty_print = True))
 f.close()
 
